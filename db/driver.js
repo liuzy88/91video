@@ -19,7 +19,7 @@ const sequelize = useMySQL ? new Sequelize(conf.database, conf.user, conf.passwo
     },
 }) : new Sequelize(conf.database, null, null, {
     dialect: 'sqlite',
-    logging: false,
+    logging: conf.showSql === false ? false : console.log,
     storage: path.join(__dirname, '../' + conf.sqlite.storage),
 });
 

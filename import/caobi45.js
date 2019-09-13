@@ -34,7 +34,7 @@ co(function* () {
     for (let i = 0; i < list.length; i++) {
         const res = yield Browser.GET(list[i]);
         const $ = cheerio.load(res.body);
-        const array = $('a.pic').map(function () {
+        const array = $('a.pic').map(() => {
             const href = $(this).attr('href');
             const id = href.substring(11, href.length - 5);
             const jpg = $(this).find('img').attr('src');
@@ -48,7 +48,7 @@ co(function* () {
             }
         }
     }
-}).catch(function (err) {
+}).catch((err) => {
     console.error(err);
 });
 

@@ -6,21 +6,20 @@ const https = require('https');
 const iconv = require('iconv-lite');
 const querystring = require('querystring');
 
-const cache = require('./cache'); // 页面缓存
-const cookie = require('./cookie'); // cookie跟随
+const cache = require('./cache');
+const cookie = require('./cookie');
 
-const Browser = {};
 const hostname_charset = {};
 
-Browser.setCharset = function (hostname, charset) {
+module.exports.setCharset = function (hostname, charset) {
     hostname_charset[hostname] = charset;
 };
 
-Browser.GET = function (url, headers) {
+module.exports.GET = function (url, headers) {
     return request('GET', url, headers);
 };
 
-Browser.POST = function (url, headers, form) {
+module.exports.POST = function (url, headers, form) {
     return request('POST', url, headers, form);
 };
 
@@ -52,9 +51,10 @@ function request(method, url, headers, form) {
         if (html) {
             const ret = {code: 304, headers: options.headers, body: html};
             cb(null, ret);
-            return; // 使用缓存
+            return;
         }
-        const req = http.request(options, (res) => {
+        const agent = options.protocol === 'https:' ? https : http;
+        const req = agent.request(options, (res) => {
             res.setTimeout(3000);
             const data = [];
             res.on('data', (chunk) => {
@@ -63,7 +63,7 @@ function request(method, url, headers, form) {
             res.on('end', () => {
                 co(function* () {
                     let buff;
-                    if (res.headers['content-encoding'] === 'gzip') { // Gzip支持
+                    if (res.headers['content-encoding'] === 'gzip') { // Gzip supper
                         buff = yield gzip(Buffer.concat(data));
                     } else {
                         buff = Buffer.concat(data);
@@ -79,7 +79,7 @@ function request(method, url, headers, form) {
                     cookie(options, res.headers);
                     const ret = {code: res.statusCode, headers: res.headers, body: body};
                     cb(null, ret);
-                }).catch(function (err) {
+                }).catch((err) => {
                     console.error('Browser err', err);
                     const ret = {code: 500, headers: {}, body: '<html></html>'};
                     cb(null, ret);
@@ -106,5 +106,3 @@ function gzip(data) {
         });
     }
 }
-
-module.exports = Browser;

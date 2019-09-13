@@ -7,6 +7,6 @@ co(function* () {
     console.log(ret1);
     const ret2 = yield DB.Videos.findByPk(1, {raw: true});
     console.log(ret2);
-}).catch(function (err) {
+}).catch((err) => {
     console.error(err);
 });

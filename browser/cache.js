@@ -1,23 +1,19 @@
 const path = require('path');
 const fs = require('fs');
 
-const cacheDir = path.join(__dirname, '../.cache');
+const Conf = require('../conf');
+const Comm = require('../comm');
 
-function mkdirs(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {recursive: true});
-    }
-}
+const cacheDir = Conf.imp.cacheDir;
 
-mkdirs(cacheDir);
+Comm.mkDirs(cacheDir);
 
 module.exports.write = function (options, data) {
     const file = path.join(cacheDir, options.host + options.path);
-    const dir = path.resolve(file, '..');
-    mkdirs(dir);
+    Comm.mkDirs(path.dirname(file));
     fs.writeFile(file, data, 'utf8', function (err) {
         if (err) {
-            console.error('写缓存失败', err);
+            console.error('write cache err', err);
         }
     });
 };
@@ -27,5 +23,5 @@ module.exports.read = function (options) {
     if (fs.existsSync(file)) {
         return fs.readFileSync(file, 'utf8');
     }
-    return;
+    return '';
 };

@@ -1,7 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
-const file = path.join(__dirname, '../.cache/.cookie.json');
+const Conf = require('../conf');
+const Comm = require('../comm');
+
+const file = path.join(Conf.imp.cacheDir, '.cookie');
 const cookie = {};
 
 module.exports = function (options, headers) {
@@ -15,7 +18,7 @@ module.exports = function (options, headers) {
         const cookies = JSON.stringify(cookie, null, 2);
         fs.writeFile(file, cookies, 'utf8', function(err) {
             if (err) {
-                console.error('写cookie失败', err);
+                console.error('write cookie err', err);
             }
         });
     }

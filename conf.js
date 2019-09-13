@@ -1,6 +1,7 @@
 module.exports = {
     db: {
         dialect: 'sqlite',
+        showSql: true,
         sqlite: {
             storage: '91video.db',
             database: "test",
@@ -22,7 +23,7 @@ module.exports = {
     },
     www: {
         port: 8080,
-        mode: 'online', // load internet url
-        // mode: 'offline', // open local disk file
+        // mode: 'online', // load internet url
+        mode: 'offline', // open local disk file
     }
 };

@@ -5,12 +5,18 @@
   "scripts": {
     "start": "node index.js"
   },
-  "keywords": ["spider", "video", "climax"],
+  "keywords": [
+    "spider",
+    "video",
+    "climax"
+  ],
   "author": "liuzy",
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "co": "^4.6.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
     "iconv-lite": "^0.5.0",
     "sequelize": "^5.18.4",
     "sqlite3": "^4.1.0"

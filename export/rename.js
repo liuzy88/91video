@@ -5,45 +5,50 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 const DB = require('../db');
+const Conf = require('../conf');
+const Comm = require('../comm');
 
-const dlDir = 'E:/91';
-const reDir = 'E:/91video';
+const dlDir = Conf.exp.dlDir;
+const reDir = Conf.exp.reDir;
 const logFile = 'rename.log';
 const errFile = 'rename.err';
 
 co(function* () {
     yield DB.init();
-    mkdirs(reDir);
-    const videos = dlFiles(dlDir);
+    Comm.mkDirs(reDir);
+    const videos = Comm.mp4Files(dlDir);
+    console.log(`Rename ${videos.length} files...`);
     for (let i = 0; i < videos.length; i++) {
-        const name = videos[i];
-        const src = path.join(dlDir, name);
+        const file = videos[i];
+        const src = path.join(dlDir, file);
         const data = yield DB.Videos.findAll({
             where: {
-                mp4: {[Op.endsWith]: name},
+                mp4: {[Op.endsWith]: file},
             },
             raw: true,
         });
         if (data.length === 0) {
-            errLog(`Warning record not found! name=${name}`);
-            continue;
+            errLog(`Warning record not found! name=${file}`);
         } else {
             if (data.length > 1) {
-                errLog(`Warning ${data.length} record! name=${name}`);
-                data.map(function (x) {
+                errLog(`Warning ${data.length} record! name=${file}`);
+                data.map((x) => {
                     errLog(`\t${x.id} ${x.title}`);
                 });
             }
-            const newName = `${padLeft(data[0].id)}_${data[0].title.replace(/[\\:\/*?"|]/gim, '_')}`;
+            const name = data[0].title.trim();
+            const newName = Comm.newName(data[0].id, name);
             const dst = path.join(reDir, newName);
             if (fs.existsSync(dst)) {
-                errLog(`Warning dst exists! name=${name}`);
+                errLog(`Warning dst exists! name=${file}`);
                 errLog(`\tdst=${dst}`);
                 continue;
             }
             try {
                 fs.renameSync(src, dst);
-                fs.appendFileSync(logFile, `${name} => ${newName}\r\n`, 'utf8');
+                fs.appendFileSync(logFile, `${file} => ${newName}\r\n`, 'utf8');
+                const count = yield DB.Videos.update({saved: 1}, {where: {mp4: {[Op.endsWith]: file}}});
+                console.log(`Rename ${count} record by ${file}`);
             } catch (e) {
                 errLog(`Warning rename failed! ${e.message}`);
                 errLog(`\tsrc=${src}`);
@@ -52,31 +57,9 @@ co(function* () {
         }
     }
     console.log(`Complete.`)
-}).catch(function (err) {
+}).catch((err) => {
     console.error(err);
 });
-
-function mkdirs(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {recursive: true});
-    }
-}
-
-function dlFiles(dir) {
-    const files = [];
-    const temps = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
-    for (let i = 0; i < temps.length; i++) {
-        if (temps[i].endsWith('.mp4')) {
-            files.push(temps[i]);
-        }
-    }
-    return files;
-}
-
-function padLeft(id) {
-    return ('00000' + id.toString()).slice(-5);
-}
-
 
 function errLog(msg) {
     console.log(msg);

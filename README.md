@@ -14,5 +14,7 @@
 
 ### local web
 
-- just download, but do not rename.
 - npm start.
+- offline mode, must fetch and download.
+
+*maybe 40000+ videos, good climax for you.*
