@@ -1,0 +1,10 @@
+.idea
+node_modules
+*.log
+*.iml
+*.db
+.cache
+fetch.page
+fetch.txt
+rename.err
+rename.txt
