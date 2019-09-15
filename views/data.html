@@ -1,0 +1,13 @@
+<% for (i in data) { %>
+    <div class="item">
+        <div class="img">
+            <div class="video" id="<%=data[i].hash%>">
+                <video width="100%" height="auto" controls="controls" preload="none" poster="<%=data[i].img||'imgs/poster.png'%>" webkit-playsinline="true" playsinline="true" x-webkit-airplay="true" x5-video-player-type="h5" x5-video-orientation="h5" x5-video-player-fullscreen="true" style="object-fit:fill">
+                    <source src="<%=data[i].mp4%>" type="video/mp4">
+                </video>
+            </div>
+            <div class="ctime"><span><%=EJS.date(data[i].uptime)%></span></div>
+        </div>
+        <div class="text"><span><%=data[i].name||'realvideo...'%></span></div>
+    </div>
+<% } %>

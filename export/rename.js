@@ -1,67 +1,88 @@
-const co = require('co');
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
+var fs = require('fs');
+var path = require('path');
+var mysql = require('mysql');
 
-const DB = require('../db');
-const Conf = require('../conf');
-const Comm = require('../comm');
+var pool = mysql.createPool(require('../config').db);
 
-const dlDir = Conf.exp.dlDir;
-const reDir = Conf.exp.reDir;
-const logFile = 'rename.log';
-const errFile = 'rename.err';
-
-co(function* () {
-    yield DB.init();
-    Comm.mkDirs(reDir);
-    const videos = Comm.mp4Files(dlDir);
-    console.log(`Rename ${videos.length} files...`);
-    for (let i = 0; i < videos.length; i++) {
-        const file = videos[i];
-        const src = path.join(dlDir, file);
-        const data = yield DB.Videos.findAll({
-            where: {
-                mp4: {[Op.endsWith]: file},
-            },
-            raw: true,
-        });
-        if (data.length === 0) {
-            errLog(`Warning record not found! name=${file}`);
+function getName(file, callback) {
+    pool.getConnection(function(err, conn) {
+        if (err) {
+            console.log(err.stack);
+            callback();
         } else {
-            if (data.length > 1) {
-                errLog(`Warning ${data.length} record! name=${file}`);
-                data.map((x) => {
-                    errLog(`\t${x.id} ${x.title}`);
-                });
-            }
-            const name = data[0].title.trim();
-            const newName = Comm.newName(data[0].id, name);
-            const dst = path.join(reDir, newName);
-            if (fs.existsSync(dst)) {
-                errLog(`Warning dst exists! name=${file}`);
-                errLog(`\tdst=${dst}`);
-                continue;
-            }
-            try {
-                fs.renameSync(src, dst);
-                fs.appendFileSync(logFile, `${file} => ${newName}\r\n`, 'utf8');
-                const count = yield DB.Videos.update({saved: 1}, {where: {mp4: {[Op.endsWith]: file}}});
-                console.log(`Rename ${count} record by ${file}`);
-            } catch (e) {
-                errLog(`Warning rename failed! ${e.message}`);
-                errLog(`\tsrc=${src}`);
-                errLog(`\tdst=${dst}`);
-            }
+            var sql = "SELECT `hash`,`name` FROM videos WHERE `name` IS NOT NULL AND `mp4` LIKE '%/" + file + "' ORDER BY `name`";
+            conn.query(sql, function(err, rows) {
+                conn.release();
+                if (err) {
+                    console.log(err.stack);
+                    callback();
+                } else if (rows.length == 1) {
+                    callback(rows[0].hash, rows[0].name);
+                } else {
+                    callback();
+                }
+            });
         }
-    }
-    console.log(`Complete.`)
-}).catch((err) => {
-    console.error(err);
-});
-
-function errLog(msg) {
-    console.log(msg);
-    fs.appendFileSync(errFile, msg + '\r\n', 'utf8');
+    });
 }
+
+function saved(hash, callback) {
+    pool.getConnection(function(err, conn) {
+        if (err) {
+            console.log(err.stack);
+            callback();
+        } else {
+            var sql = "UPDATE videos SET saved=1 WHERE `hash`='" + hash + "'";
+            conn.query(sql, function(err, rows) {
+                conn.release();
+                if (err) {
+                    console.log(err.stack);
+                }
+                callback();
+            });
+        }
+    });
+}
+
+var inDir = 'E:/91';
+var outDir = 'E:/91Video';
+var log = 'rename.log';
+var files = [];
+var temps = fs.readdirSync(inDir);
+for (i in temps) {
+    if (temps[i] == 'Thumbs.db') {
+        fs.unlinkSync(path.join(inDir, temps[i]));
+        reName(++j);
+    } else if (temps[i].endsWith('.mp4')) {
+        files.push(temps[i]);
+    }
+}
+
+function reName(j) {
+    var file = files[j];
+    if (file) {
+        getName(file, function(hash, name) {
+            if (name) {
+                if (fs.existsSync(path.join(outDir, name + '.mp4'))) {
+                    fs.unlinkSync(path.join(inDir, file));
+                    console.log('(' + (j + 1) + '/' + files.length + ')', file, '->', name + '.mp4', 'but is exists!');
+                } else {
+                    name = name.replace(/[\\/:*?"<>|]/g,'_');
+                    fs.renameSync(path.join(inDir, file), path.join(outDir, name.trim() + '.mp4'));
+                    fs.appendFileSync(log, j + '|' + file + '|' + name + '.mp4\n');
+                    console.log('(' + (j + 1) + '/' + files.length + ')', file, '->', name + '.mp4');
+                }
+                saved(hash, function() {
+                    reName(++j);
+                });
+            } else {
+                console.log('(' + (j + 1) + '/' + files.length + ')', file, 'cn null or more!');
+                reName(++j);
+            }
+        });
+    } else {
+        require('./fetch');
+    }
+}
+
+reName(0);

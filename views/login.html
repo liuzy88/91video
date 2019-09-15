@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,maximum-scale=1, user-scalable=no">
+    <title>RealVideo</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body>
+    <div style="max-width:780px;margin-left: auto;margin-right: auto;">
+        <p><img src="/favicon.ico" width="20" height="20"> RealVideo</p>
+        <div class="items">
+		    <div class="item">
+		        <div class="img">
+		            <div class="video">
+		                <video width="100%" height="auto" controls="controls" preload="none" poster="imgs/poster.png" webkit-playsinline="true" playsinline="true" x-webkit-airplay="true" x5-video-player-type="h5" x5-video-orientation="h5" x5-video-player-fullscreen="true" style="object-fit:fill">
+		                    <source src="" type="video/mp4">
+		                </video>
+		            </div>
+		            <div class="ctime"><span><%=EJS.date(new Date().getTime())%></span></div>
+		        </div>
+		        <div class="text"><span>realvideo...</span></div>
+		    </div>
+        </div>
+    </div>
+</body>
+
+</html>
