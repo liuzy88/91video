@@ -1,7 +1,7 @@
 module.exports = {
     db: {
         dialect: 'sqlite',
-        showSql: true,
+        showSql: false,
         sqlite: {
             storage: '91video.db',
             database: "test",
@@ -15,11 +15,11 @@ module.exports = {
         }
     },
     imp: {
-        cacheDir: 'E:/91Cache',
+        cacheDir: 'G:/91Cache',
     },
     exp: {
-        dlDir: 'E:/91Download', // Thunder download dir
-        reDir: 'E:/91Video', // rename output dir
+        dlDir: 'G:/91Download', // Thunder download dir
+        reDir: 'G:/91Video', // rename output dir
     },
     www: {
         port: 8080,

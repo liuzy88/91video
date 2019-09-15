@@ -7,12 +7,13 @@ const Comm = require('../comm');
 
 const dlDir = Conf.exp.dlDir;
 const rows = 500;
+const page = 1;
 const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 
 co(function*() {
     yield DB.init();
-    const page = Comm.readFileInt(pageFile, 1);
+    // const page = Comm.readFileInt(pageFile, 1);
     const exFiles = Comm.mp4Files(dlDir);
     let sql = `SELECT id, mp4 FROM videos WHERE saved=0`;
     if (exFiles.length > 0) {
@@ -23,9 +24,12 @@ co(function*() {
     const data = yield DB.query(sql, pms);
     console.log(`Fetch page ${page} count ${data.length}`);
     if (data.length > 0) {
-        Comm.writeFileVal(pageFile, page + 1);
+        // Comm.writeFileVal(pageFile, page + 1);
+        if (fs.existsSync(outFile)) {
+            fs.unlinkSync(outFile);
+        }
         for (let i = 0; i < data.length; i++) {
-            fs.appendFileSync(outFile, `${data[i].mp4}?id=${data[i].id}\r\n`);
+            fs.appendFileSync(outFile, `${data[i].mp4}?id=${('00000' + data[i].id).slice(-5)}\r\n`);
         }
     }
     console.log(`Complete.`)

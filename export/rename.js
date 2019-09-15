@@ -32,7 +32,7 @@ co(function* () {
         } else {
             if (data.length > 1) {
                 errLog(`Warning ${data.length} record! name=${file}`);
-                data.map((x) => {
+                data.map(function (x) {
                     errLog(`\t${x.id} ${x.title}`);
                 });
             }
@@ -42,11 +42,12 @@ co(function* () {
             if (fs.existsSync(dst)) {
                 errLog(`Warning dst exists! name=${file}`);
                 errLog(`\tdst=${dst}`);
+                fs.renameSync(src, path.join(dlDir, newName));
                 continue;
             }
             try {
                 fs.renameSync(src, dst);
-                fs.appendFileSync(logFile, `${file} => ${newName}\r\n`, 'utf8');
+                // fs.appendFileSync(logFile, `${file} => ${newName}\r\n`, 'utf8');
                 const count = yield DB.Videos.update({saved: 1}, {where: {mp4: {[Op.endsWith]: file}}});
                 console.log(`Rename ${count} record by ${file}`);
             } catch (e) {
@@ -63,5 +64,5 @@ co(function* () {
 
 function errLog(msg) {
     console.log(msg);
-    fs.appendFileSync(errFile, msg + '\r\n', 'utf8');
+    // fs.appendFileSync(errFile, msg + '\r\n', 'utf8');
 }
