@@ -7,7 +7,7 @@ const Browser = require('../browser');
 const mode = 0;
 
 co(function* () {
-    yield DB.init();
+    yield DB.use('caobi45');
     Browser.setCharset('www.caobi45.com', 'gb2312');
     if (mode >= 0) {
         /* climb play page, get videos */
@@ -17,15 +17,15 @@ co(function* () {
             const $ = cheerio.load(res.body);
             const result = /f:'(http[^\']+.mp4)',/.exec(res.body) || ['', ''];
             if (result[1]) {
-                const title = unescape($('title').html().replace(/&#x/g, '%u').replace(/;/g, ''));
-                const video = {url: url, title: title.substring(5), mp4: result[1]};
+                const title = $('title').text().trim();
+                const video = {id: id, url: url, title: title.substring(5), mp4: result[1]};
                 console.debug('Video', JSON.stringify(video));
-                yield DB.Videos.update(video, {where: {id: id}});
+                yield DB.Model.replace(video);
             }
         }
     }
     if (mode <= 0) {
-        /* climb list page, update img */
+        /* climb list page, update preview jpg */
         const list = [];
         add(list, 'http://www.caobi45.com/index.html');
         add(list, 'http://www.caobi45.com/list/index27.html', 117);
@@ -49,7 +49,7 @@ co(function* () {
                 const video = array[j];
                 console.debug('Image', JSON.stringify(video));
                 if (video.id && video.jpg) {
-                    yield DB.Videos.update({jpg: video.jpg}, {where: {id: video.id}});
+                    yield DB.Model.update({jpg: video.jpg}, {where: {id: video.id}});
                 }
             }
         }

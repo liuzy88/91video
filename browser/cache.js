@@ -9,7 +9,7 @@ const cacheDir = Conf.imp.cacheDir;
 Comm.mkDirs(cacheDir);
 
 module.exports.write = function (options, data) {
-    const file = path.join(cacheDir, options.host + options.path);
+    const file = path.join(cacheDir, options.host, Comm.winName(options.path));
     Comm.mkDirs(path.dirname(file));
     fs.writeFile(file, data, 'utf8', function (err) {
         if (err) {
@@ -19,7 +19,7 @@ module.exports.write = function (options, data) {
 };
 
 module.exports.read = function (options) {
-    const file = path.join(cacheDir, options.host + options.path);
+    const file = path.join(cacheDir, options.host, Comm.winName(options.path));
     if (fs.existsSync(file)) {
         return fs.readFileSync(file, 'utf8');
     }

@@ -1,17 +1,16 @@
 module.exports = {
     db: {
         dialect: 'sqlite',
-        showSql: false,
+        showSql: true,
         sqlite: {
             storage: '91video.db',
-            database: "test",
         },
         mysql: {
             host: "127.0.0.1",
             port: 3306,
             user: "gloat",
             password: "clouds",
-            database: "test",
+            database: "91video",
         }
     },
     imp: {
@@ -23,7 +22,8 @@ module.exports = {
     },
     www: {
         port: 8080,
-        // mode: 'online', // load internet url
-        mode: 'offline', // open local disk file
+        table: 'caobi45', // the database table name
+        mode: 'online', // load internet url
+        // mode: 'offline', // open local disk file
     }
 };

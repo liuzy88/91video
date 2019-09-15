@@ -12,7 +12,7 @@ const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 
 co(function*() {
-    yield DB.init();
+    yield DB.use('caobi45');
     // const page = Comm.readFileInt(pageFile, 1);
     const exFiles = Comm.mp4Files(dlDir);
     let sql = `SELECT id, mp4 FROM videos WHERE saved=0`;

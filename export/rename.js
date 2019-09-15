@@ -14,14 +14,14 @@ const logFile = 'rename.log';
 const errFile = 'rename.err';
 
 co(function* () {
-    yield DB.init();
+    yield DB.use('caobi45');
     Comm.mkDirs(reDir);
     const videos = Comm.mp4Files(dlDir);
     console.log(`Rename ${videos.length} files...`);
     for (let i = 0; i < videos.length; i++) {
         const file = videos[i];
         const src = path.join(dlDir, file);
-        const data = yield DB.Videos.findAll({
+        const data = yield DB.Model.findAll({
             where: {
                 mp4: {[Op.endsWith]: file},
             },
@@ -48,7 +48,7 @@ co(function* () {
             try {
                 fs.renameSync(src, dst);
                 // fs.appendFileSync(logFile, `${file} => ${newName}\r\n`, 'utf8');
-                const count = yield DB.Videos.update({saved: 1}, {where: {mp4: {[Op.endsWith]: file}}});
+                const count = yield DB.Model.update({saved: 1}, {where: {mp4: {[Op.endsWith]: file}}});
                 console.log(`Rename ${count} record by ${file}`);
             } catch (e) {
                 errLog(`Warning rename failed! ${e.message}`);

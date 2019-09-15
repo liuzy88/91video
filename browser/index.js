@@ -53,6 +53,7 @@ function request(method, url, headers, form) {
             cb(null, ret);
             return;
         }
+        cookie.append(options);
         const agent = options.protocol === 'https:' ? https : http;
         const req = agent.request(options, (res) => {
             res.setTimeout(3000);
@@ -76,7 +77,7 @@ function request(method, url, headers, form) {
                     if (body.length > 500) {
                         cache.write(options, body);
                     }
-                    cookie(options, res.headers);
+                    cookie.remember(options, res.headers);
                     const ret = {code: res.statusCode, headers: res.headers, body: body};
                     cb(null, ret);
                 }).catch((err) => {

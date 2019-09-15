@@ -1,66 +1,59 @@
 const co = require('co');
 const fs = require('fs');
 const path = require('path');
+const Sequelize = require('sequelize');
 
-const Driver = require('./driver');
+const conf = require('../conf').db;
+const model = require('./model');
 
-module.exports.useMySQL = Driver.useMySQL;
+const DB = {};
 
-module.exports.query = function (sql, pms) {
-    return Driver.sequelize.query(sql, {
+DB.useMySQL = conf.dialect === 'mysql';
+
+DB.sequelize = DB.useMySQL ? new Sequelize(conf.database, conf.user, conf.password, {
+    timezone: '+08:00',
+    dialect: 'mysql',
+    dialectOptions: {charset: "utf8",},
+    pool: {min: 0, max: 5, acquire: 30000, idle: 10000},
+}) : new Sequelize(conf.database, null, null, {
+    dialect: 'sqlite',
+    logging: conf.showSql === false ? false : console.log,
+    storage: path.join(__dirname, '../' + conf.sqlite.storage),
+});
+
+DB.query = function (sql, pms) {
+    return DB.sequelize.query(sql, {
         raw: true,
         replacements: pms,
-        type: Driver.sequelize.QueryTypes.SELECT,
+        type: DB.sequelize.QueryTypes.SELECT,
     });
 };
 
-module.exports.update = function (sql, pms) {
-    return Driver.sequelize.query(sql, {
+DB.update = function (sql, pms) {
+    return DB.sequelize.query(sql, {
         replacements: pms,
     });
 };
 
-module.exports.init = function () {
+DB.use = function (table) {
     return function (cb) {
         co(function* () {
-            const modelDir = path.join(__dirname, './models');
-            const files = fs.readdirSync(modelDir);
-            for (let i = 0; i < files.length; i++) {
-                const file = path.join(modelDir, files[i]);
-                if (file.endsWith('.js') && !file.endsWith('_data.js')) {
-                    try {
-                        let model = require(file);
-                        let name = model.name;
-                        name = name.charAt(0).toUpperCase() + name.slice(1);
-                        module.exports[name] = model;
-                        yield model.sync({force: false, alter: false});
-                        let datafile = path.join(modelDir, model.name + '_data.js');
-                        if (fs.existsSync(datafile)) {
-                            let count = yield model.count();
-                            if (count === 0) {
-                                let data = require(datafile);
-                                model.bulkCreate(data);
-                            }
-                        }
-                        let sqlfile = path.join(modelDir, model.name + '_data.sql');
-                        if (fs.existsSync(sqlfile)) {
-                            let count = yield model.count();
-                            if (count === 0) {
-                                let data = fs.readFileSync(sqlfile, 'utf8');
-                                Driver.sequelize.query(data, {
-                                    raw: true,
-                                    type: Driver.sequelize.QueryTypes.INSERT,
-                                });
-                            }
-                        }
-                    } catch (err) {
-                        console.error('加载Model异常', file, err)
-                    }
-                }
-            }
+            DB.table = table;
+            DB.Model = DB.sequelize.define(table, model, {
+                tableName: table,
+                timestamps: false,
+                charset: 'utf8',
+            });
+            DB.Model.replace = function (obj) {
+                return DB.query("REPLACE INTO `" + table + "`(id,url,title,mp4) VALUES(?,?,?,?)",
+                    [obj.id, obj.url, obj.title, obj.mp4]);
+            };
+            yield DB.Model.sync({force: false, alter: false});
             cb(null);
         }).catch((err) => {
             cb(err);
         });
     }
 };
+
+module.exports = DB;

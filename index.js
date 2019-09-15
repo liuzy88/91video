@@ -12,13 +12,12 @@ app.set('views', path.join(__dirname, 'www'));
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'static')));
 
 app.get('/', (req, res, next) => {
     co(function* () {
         const id = req.query.id;
         if (id > 0) {
-            const data = yield DB.Videos.findOne({where: {id: id}});
+            const data = yield DB.Model.findOne({where: {id: id}});
             if (Conf.www.mode === 'offline') {
                 const flag = yield Comm.openVideo(Conf.exp, data);
                 const msg = flag ? 'Play success.' : 'Play failure.';
@@ -29,7 +28,7 @@ app.get('/', (req, res, next) => {
         } else {
             const page = parseInt(req.query.page) || 1;
             const rows = parseInt(req.query.rows) || 100;
-            const data = yield DB.Videos.findAndCountAll({
+            const data = yield DB.Model.findAndCountAll({
                 where: Conf.www.mode === 'offline' ? {saved: 1} : {},
                 order: ['id'],
                 limit: rows,
@@ -55,7 +54,7 @@ server.on('error', (err) => {
 });
 server.on('listening', () => {
     co(function* () {
-        yield DB.init();
+        yield DB.use('caobi45');
         console.log(`Web start http://localhost:${server.address().port}/`);
     }).catch((err) => {
         console.log(err);
