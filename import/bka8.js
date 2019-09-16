@@ -10,7 +10,7 @@ co(function* () {
         const url = `http://www.bka8.com/?m=vod-play-id-${id}-src-1-num-1.html`;
         const res = yield Browser.GET(url, {Cookie: 'PHPSESSID=p5r2tp0mcra0pfu0aok07rcec7;'});
         const $ = cheerio.load(res.body);
-        const result = /unescape\(([\S\s]+)'\);/.exec(res.body) || ['', ''];
+        const result = /unescape\('([\S\s]+)'\);/.exec(res.body) || ['', ''];
         if (result[1]) {
             const title = $('.position').find('a').last().text().trim();
             const video = {id: id, url: url, title: title, mp4: unescape(result[1])};

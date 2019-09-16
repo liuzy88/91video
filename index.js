@@ -27,7 +27,7 @@ app.get('/', (req, res, next) => {
             }
         } else {
             const page = parseInt(req.query.page) || 1;
-            const rows = parseInt(req.query.rows) || 100;
+            const rows = parseInt(req.query.rows) || 48;
             const data = yield DB.Model.findAndCountAll({
                 where: Conf.www.mode === 'offline' ? {saved: 1} : {},
                 order: ['id'],
@@ -54,7 +54,7 @@ server.on('error', (err) => {
 });
 server.on('listening', () => {
     co(function* () {
-        yield DB.use('caobi45');
+        yield DB.use(Conf.www.table);
         console.log(`Web start http://localhost:${server.address().port}/`);
     }).catch((err) => {
         console.log(err);

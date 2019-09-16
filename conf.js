@@ -1,7 +1,7 @@
 module.exports = {
     db: {
         dialect: 'sqlite',
-        showSql: true,
+        showSql: false,
         sqlite: {
             storage: '91video.db',
         },
@@ -22,7 +22,7 @@ module.exports = {
     },
     www: {
         port: 8080,
-        table: 'caobi45', // the database table name
+        table: 'bka8', // the database table name
         mode: 'online', // load internet url
         // mode: 'offline', // open local disk file
     }
