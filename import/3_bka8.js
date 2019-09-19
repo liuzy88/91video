@@ -5,10 +5,11 @@ const DB = require('../db');
 const Browser = require('../browser');
 
 co(function* () {
+    // www.bka8.com or www.ud35.com
     yield DB.use('bka8');
     for (let id = 2273; id < 8298; id++) {
         const url = `http://www.bka8.com/?m=vod-play-id-${id}-src-1-num-1.html`;
-        const res = yield Browser.GET(url, {Cookie: 'PHPSESSID=a47t15m7kqlhhnfmfclhsff3g5;'});
+        const res = yield Browser.GET(url, {Cookie: 'PHPSESSID=1gendmsq3r3p0ohi8osg1mefi5;'});
         const $ = cheerio.load(res.body);
         const result = /unescape\('([\S\s]+)'\);/.exec(res.body) || ['', ''];
         if (result[1]) {

@@ -5,7 +5,8 @@ const DB = require('../db');
 const Browser = require('../browser');
 
 co(function* () {
-    yield DB.use('668wy'); // the site 668wy equals 0154s
+    // 668wy.com or 0154s.com
+    yield DB.use('668wy');
     for (let id = 1; id < 5530; id++) {
         const url = `http://668wy.com/?m=vod-play-id-${id}-src-1-num-1.html`;
         const res = yield Browser.GET(url, {Cookie: 'PHPSESSID=uign95nav471a0c3ujcn97qi30;'});

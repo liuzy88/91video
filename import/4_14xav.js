@@ -5,10 +5,11 @@ const DB = require('../db');
 const Browser = require('../browser');
 
 co(function* () {
+    // 14xav.com or 10xav.com
     yield DB.use('14xav');
-    Browser.setCharset('14xav.com', 'gb2312');
+    Browser.setCharset('10xav.com', 'gb2312');
     for (let id = 3393; id < 50000; id++) {
-        const url = `http://14xav.com/player/index${id}.html`;
+        const url = `http://10xav.com/player/index${id}.html`;
         const res = yield Browser.GET(url);
         const $ = cheerio.load(res.body);
         const result = /f:'(http[^\']+.mp4)',/.exec(res.body) || ['', ''];

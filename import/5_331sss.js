@@ -5,7 +5,8 @@ const DB = require('../db');
 const Browser = require('../browser');
 
 co(function* () {
-    yield DB.use('331sss'); // 225sss 661sss
+    // 331sss.com or 225sss.com or 661sss.com
+    yield DB.use('331sss');
     Browser.setCharset('331sss.com', 'gb2312');
     for (let id = 1644; id < 50000; id++) {
         /*const url = `http://14xav.com/player/index${id}.html`;

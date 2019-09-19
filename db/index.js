@@ -10,15 +10,18 @@ const DB = {};
 
 DB.useMySQL = conf.dialect === 'mysql';
 
-DB.sequelize = DB.useMySQL ? new Sequelize(conf.database, conf.user, conf.password, {
-    timezone: '+08:00',
+DB.sequelize = DB.useMySQL ? new Sequelize(conf.database, conf.mysql.user, conf.mysql.password, {
     dialect: 'mysql',
-    dialectOptions: {charset: "utf8",},
-    pool: {min: 0, max: 5, acquire: 30000, idle: 10000},
+    timezone: '+08:00',
+    dialectOptions: {charset: "utf8", },
+    host: conf.mysql.host,
+    port: conf.mysql.port,
+    pool: {min: 0, max: 5, acquire: 30000, idle: 10000, },
+    logging: conf.showSql === false ? false : console.log,
 }) : new Sequelize(conf.database, null, null, {
     dialect: 'sqlite',
-    logging: conf.showSql === false ? false : console.log,
     storage: path.join(__dirname, '../' + conf.sqlite.storage),
+    logging: conf.showSql === false ? false : console.log,
 });
 
 DB.query = function (sql, pms) {
