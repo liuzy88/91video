@@ -22,7 +22,7 @@ module.exports = {
     },
     www: {
         port: 8080,
-        table: 'bka8', // the database table name
+        table: 'caobi45', // the database table name
         mode: 'online', // load internet url
         // mode: 'offline', // open local disk file
     }
