@@ -12,13 +12,14 @@ const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 
 co(function*() {
-    yield DB.use('caobi45');
+    const model = yield DB.use('caobi45');
     // const page = Comm.readFileInt(pageFile, 1);
-    const exFiles = Comm.mp4Files(dlDir);
-    let sql = `SELECT id, mp4 FROM videos WHERE saved=0`;
+    const exFiles = Comm.mp4TempFiles(dlDir);
+    let sql = `SELECT id, mp4, SUBSTR(mp4,LENGTH(mp4)-38) AS fname FROM ${model.tableName} WHERE saved=0`;
     if (exFiles.length > 0) {
-        sql += ` AND mp4 NOT LIKE '%${exFiles.join(`' AND \`mp4\` NOT LIKE '%`)}'`;
+        sql += ` AND fname NOT IN ('${exFiles.join(`','`)}')`;
     }
+    sql += ` GROUP BY fname`;
     sql += ` ORDER BY id LIMIT ${(page - 1) * rows}, ${rows}`;
     let pms = [];
     const data = yield DB.query(sql, pms);
@@ -29,7 +30,7 @@ co(function*() {
             fs.unlinkSync(outFile);
         }
         for (let i = 0; i < data.length; i++) {
-            fs.appendFileSync(outFile, `${data[i].mp4}?id=${('00000' + data[i].id).slice(-5)}\r\n`);
+            fs.appendFileSync(outFile, `${data[i].mp4}#id=${('00000' + data[i].id).slice(-5)}\r\n`);
         }
     }
     console.log(`Complete.`)

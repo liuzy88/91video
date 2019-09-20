@@ -8,13 +8,24 @@ module.exports.mkDirs = function (dir) {
     }
 };
 
-module.exports.mp4Files = function (dir) {
+module.exports.mp4TempFiles = function (dir) {
     const files = [];
     const temps = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
     for (let i = 0; i < temps.length; i++) {
         const idx = temps[i].indexOf('.mp4');
         if (idx !== -1) {
             files.push(temps[i].substring(0, idx) + '.mp4');
+        }
+    }
+    return files;
+};
+
+module.exports.mp4Files = function (dir) {
+    const files = [];
+    const temps = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
+    for (let i = 0; i < temps.length; i++) {
+        if (temps[i].endsWith('.mp4')) {
+            files.push(temps[i]);
         }
     }
     return files;

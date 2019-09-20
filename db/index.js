@@ -52,7 +52,7 @@ DB.use = function (table) {
                     [obj.id, obj.url, obj.title, obj.mp4]);
             };
             yield DB.Model.sync({force: false, alter: false});
-            cb(null);
+            cb(null, DB.Model);
         }).catch((err) => {
             cb(err);
         });
