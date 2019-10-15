@@ -21,10 +21,7 @@ app.get('/', (req, res, next) => {
             const data = yield DB.Model.findOne({where: {id: id}});
             if (Conf.www.mode === 'offline') {
                 const flag = yield Comm.openVideo(Conf.exp, data);
-                if (flag)
-                    res.end('Play failure.')
-                else
-                    res.end('<script>window.close()</script>')
+                res.end(flag ? 'Play failure.' : '<script>window.close()</script>')
             } else {
                 res.render('index', {data: data});
             }
