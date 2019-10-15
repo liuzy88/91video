@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>91Video</title>
     <style>
+        body {background-color: #c7d6ce;}
         * {margin: 0;padding: 0;}
         ul {list-style: none;}
         ul li {display: block;border: 1px solid gray;padding: 4px;margin: 2px 4px 2px 4px;}
@@ -20,21 +21,31 @@
         .page li.active {background-color: #039BE5;color: white;}
         .page li.active a {color: white;}
         .list {float: left;width: 49%;padding: 2px 4px;}
+        #video {width: 88%; height: auto;}
     </style>
 </head>
 <body>
 <% if (data.mp4) { %>
 <div class="play">
-    <video width="860px" height="auto" controls="controls" preload="none" webkit-playsinline="true" playsinline autoplay
-           x-webkit-airplay="true" x5-video-player-type="h5" x5-video-orientation="h5" x5-video-player-fullscreen="true"
-           poster="<%=data.jpg||''%>">
-        <source src="<%=data.mp4%>" type="video/mp4">
-    </video>
-    <h4><a href="/?id=<%=data.id-1%>">上一集</a> <%=data.title%> <a href="/?id=<%=data.id+1%>">下一集</a></h4>
+    <center><div id="video"></div></center>
+    <h4><a href="/?id=<%=data.id-1%>">上一集</a> 【 <a href="<%=data.mp4%>" target="_blank"><%=data.title%></a> 】 <a href="/?id=<%=data.id+1%>">下一集</a></h4>
 </div>
+<script type="text/javascript" src="/ckplayer/ckplayer.min.js"></script>
+<script type="text/javascript">
+    new ckplayer({
+        container: '#video',
+        variable: 'player',
+        autoplay: true,
+        volume: 1,
+        poster:'<%=data.jpg||''%>',
+        video: '<%=data.mp4%>',
+    });
+</script>
 <% } else if (data.rows) {
-    let width = 11, pad = Math.ceil(width / 2), start = 1, end = width, max = Math.ceil(data.count / rows);
-    if (rows > width) {
+    let width = 11, pad = Math.floor(width / 2), start = 1, end = width, max = Math.ceil(data.count / rows);
+    if (max <= width) {
+        end = max;
+    } else if (rows > width) {
         if (page > pad) {
             start += page - pad;
             end += page - pad;
@@ -47,7 +58,7 @@
 %>
 <div class="clear"></div>
 <ul class="page">
-    <em>Page <%=page%> of <%=Math.ceil(data.count / rows)%></em>
+    <em>Page <%=page%> of <%=max%></em>
     <li><a href="/?page=<%=page > 1 ? page - 1 : 1%>">Previous</a></li>
     <% for (let i = start; i <= end; i++) { %>
     <li class="<%= page===i?'active':''%>"><a href="/?page=<%= i %>"><%= i %></a></li>
@@ -72,7 +83,7 @@
 </div>
 <div class="clear"></div>
 <ul class="page">
-    <em>Page <%=page%> of <%=Math.ceil(data.count / rows)%></em>
+    <em>Page <%=page%> of <%=max%></em>
     <li><a href="/?page=<%=page > 1 ? page - 1 : 1%>">Previous</a></li>
     <% for (let i = start; i <= end; i++) { %>
         <li class="<%= page===i?'active':''%>"><a href="/?page=<%= i %>"><%= i %></a></li>

@@ -1,20 +1,24 @@
 # 91video
 
-> The adult video from 91 team.
+> The adult video from 91 team
 
-### import
+### Usage
 
-- run any import js.
+- npm install
 
-### export
+### Import videos
 
-- run fetch js.
-- batch download using Thunder.
-- run rename js.
+- run any import js
 
-### local web
+### Export videos
 
-- npm start.
-- offline mode, must fetch and download.
+- run fetch js
+- batch download using Thunder
+- run rename js
 
-*more than 40000+ videos, good climax for you.*
+### Run local web
+
+- npm start
+- to offline mode, must fetch and download
+
+*more than 40000+ videos, good climax for you*
