@@ -48,7 +48,7 @@ module.exports.writeFileVal = function (file, val) {
 
 module.exports.winName = function(name) {
     return name.trim().replace(/[\\:*?"|]/gim, '_').trim();
-}
+};
 
 module.exports.newName = function (id, name) {
     return `${('00000' + id).slice(-5)}_${module.exports.winName(name)}`.trim() + '.mp4';

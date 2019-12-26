@@ -36,7 +36,10 @@ co(function* () {
                     errLog(`\t${x.id} ${x.title}`);
                 });
             }
-            const name = data[0].title.trim();
+            let name = data[0].title.trim();
+            if (name.indexOf('http:/') !== -1) {
+                name = name.split('http:/')[0] + Date.now().toString();
+            }
             const newName = Comm.newName(data[0].id, name);
             const dst = path.join(reDir, newName);
             if (fs.existsSync(dst)) {

@@ -14,11 +14,11 @@ module.exports = {
         }
     },
     imp: {
-        cacheDir: 'G:/91Cache',
+        cacheDir: 'F:/91Cache',
     },
     exp: {
-        dlDir: 'G:/91Download', // Thunder download dir
-        reDir: 'G:/91Video', // rename output dir
+        dlDir: 'F:/91Download', // Thunder download dir
+        reDir: 'F:/91Video', // rename output dir
     },
     www: {
         port: 8080,
