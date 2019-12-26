@@ -6,6 +6,7 @@ const https = require('https');
 const iconv = require('iconv-lite');
 const querystring = require('querystring');
 
+const ua = require('./ua');
 const cache = require('./cache');
 const cookie = require('./cookie');
 
@@ -38,7 +39,7 @@ function request(method, url, headers, form) {
             'Cache-Control': 'max-age=0',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+            'User-Agent': ua(),
         };
         if (method === 'POST') {
             options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -87,7 +88,7 @@ function request(method, url, headers, form) {
                 });
             })
         });
-        req.setTimeout(5000);
+        req.setTimeout(3000);
         req.on('error', (err) => {
             console.error('Browser err', err);
             const ret = {code: 500, headers: {}, body: '<html></html>'};

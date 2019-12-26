@@ -58,9 +58,9 @@ module.exports.openVideo = function (conf, data) {
     return function (cb) {
         const src = path.join(conf.dlDir, path.basename(data.mp4));
         const dst = fs.existsSync(src) ? src : path.join(conf.reDir, module.exports.newName(data.id, data.title));
-        exec('start ' + dst, function (err, stdout, stderr) {
-            if (err) {console.log(err);}
-            cb(null, !err);
+        exec('explorer.exe "' + dst + '"', function (err, stdout, stderr) {
+            // if (err) {console.log(err);}
+            cb(null);
         });
     }
 };
