@@ -48,8 +48,8 @@ DB.use = function (table) {
                 charset: 'utf8',
             });
             DB.Model.replace = function (obj) {
-                return DB.update("REPLACE INTO `" + table + "`(id,url,title,mp4) VALUES(?,?,?,?)",
-                    [obj.id, obj.url, obj.title, obj.mp4]);
+                return DB.update("REPLACE INTO `" + table + "`(id,url,title,mp4,jpg) VALUES(?,?,?,?,?)",
+                    [obj.id, obj.url, obj.title, obj.mp4, obj.jpg]);
             };
             yield DB.Model.sync({force: false, alter: false});
             cb(null, DB.Model);

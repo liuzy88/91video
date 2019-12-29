@@ -25,7 +25,7 @@ module.exports.POST = function (url, headers, form) {
 };
 
 function request(method, url, headers, form) {
-    console.debug(`Browser ${method} ${url}`);
+    console.log(`Browser ${method} ${url}`);
     return function (cb) {
         headers = headers || {};
         form = form || {};
@@ -82,7 +82,7 @@ function request(method, url, headers, form) {
                     const ret = {code: res.statusCode, headers: res.headers, body: body};
                     cb(null, ret);
                 }).catch((err) => {
-                    console.error('Browser err', err);
+                    console.log('Browser err', err);
                     const ret = {code: 500, headers: {}, body: '<html></html>'};
                     cb(null, ret);
                 });
@@ -90,7 +90,7 @@ function request(method, url, headers, form) {
         });
         req.setTimeout(3000);
         req.on('error', (err) => {
-            console.error('Browser err', err);
+            console.log('Browser err', err);
             const ret = {code: 500, headers: {}, body: '<html></html>'};
             cb(null, ret);
         });
