@@ -22,8 +22,8 @@ module.exports = {
     },
     www: {
         port: 8080,
-        table: 'caobi45', // the database table name
-        // mode: 'online', // load internet url
-        mode: 'offline', // open local disk file
+        table: '8x3a', // the database table name
+        mode: 'online', // load internet url
+        // mode: 'offline', // open local disk file
     }
 };

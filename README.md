@@ -4,21 +4,24 @@
 
 ### Usage
 
+- install NodeJS
 - npm install
 
 ### Import videos
 
-- run any import js
+- cd import
+- node 6_8x3a.js
 
 ### Export videos
 
-- run fetch js
-- batch download using Thunder
-- run rename js
+- cd export
+- node fetch js
+- batch download use Thunder
+- node rename.js
 
 ### Run local web
 
+- setting table name
 - npm start
-- to offline mode, must fetch and download
 
 *more than 40000+ videos, good climax for you*
