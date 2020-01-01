@@ -1,27 +1,38 @@
 const path = require('path');
 const fs = require('fs');
+const Cookie = require('cookie');
 
 const Conf = require('../conf');
 const Comm = require('../comm');
 
 const file = path.join(Conf.imp.cacheDir, '.cookie');
-const cookie = {};
+var obj = undefined;
 
-module.exports.append = function (options) {
-    // TODO
+module.exports.append = function(options) {
+    if (obj === undefined) {
+        if (fs.existsSync(file)) {
+            try {
+                obj = JSON.parse(fs.readFileSync(file)) || {};
+            } catch () {}
+        }
+    }
 };
 
-module.exports.remember = function (options, headers) {
-    const array = headers['set-cookie'];
-    if (array && array.length > 0) {
-        for (let i = 0; i < array.length; i++) {
-            const kv = array[0].trim().split(';')[0];
-            const arr = kv.trim().split('=');
-            const k = arr[0].trim();
-            cookie[k] = arr[1].trim();
+module.exports.remember = function(options, headers) {
+    if (obj === undefined) {
+        if (fs.existsSync(file)) {
+            try {
+                obj = JSON.parse(fs.readFileSync(file)) || {};
+            } catch () {}
         }
-        const cookies = JSON.stringify(cookie, null, 2);
-        fs.writeFile(file, cookies, 'utf8', function (err) {
+    }
+    const cookies = headers['set-cookie'] || [];
+    if (cookies.length > 0) {
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = Cookie.parse(cookies[0].trim());
+            obj[Object.keys(cookie)[0]] = cookie;
+        }
+        fs.writeFile(file, JSON.stringify(obj, null, 2), 'utf8', function(err) {
             if (err) {
                 console.error('write cookie err', err);
             }
