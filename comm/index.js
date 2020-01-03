@@ -66,5 +66,5 @@ module.exports.openVideo = function (conf, data) {
 
 module.exports.exec = function (command) {
     console.log(command);
-    exec(`start cmd /k ${command}`, function(err, stdout, stderr) {});
+    exec(`start cmd /c ${command}`, function(err, stdout, stderr) {});
 };
