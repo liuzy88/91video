@@ -8,7 +8,7 @@ const querystring = require('querystring');
 
 const ua = require('./ua');
 const cache = require('./cache');
-const cookie = require('./cookie');
+const Cookie = require('./cookie');
 
 const hostname_charset = {};
 
@@ -54,7 +54,7 @@ function request(method, url, headers, form) {
             cb(null, ret);
             return;
         }
-        cookie.append(options);
+        Cookie.append(options);
         const agent = options.protocol === 'https:' ? https : http;
         const req = agent.request(options, (res) => {
             res.setTimeout(3000);
@@ -78,7 +78,7 @@ function request(method, url, headers, form) {
                     if (body.length > 500) {
                         cache.write(options, body);
                     }
-                    cookie.remember(options, res.headers);
+                    Cookie.remember(options, res.headers);
                     const ret = {code: res.statusCode, headers: res.headers, body: body};
                     cb(null, ret);
                 }).catch((err) => {
