@@ -1,21 +1,24 @@
 const co = require('co');
 const cheerio = require('cheerio');
-const exec = require('child_process').exec;
 
 const DB = require('../db');
+const Comm = require('../comm');
 const Browser = require('../browser');
 
 const start = 1; // 开始数
 const end = 1233; // 结束数
 const threads = 16; // 开多少个窗口
 let N = process.argv[2]; // 当前窗口序号
-
 if (N === undefined) {
     for (let n = 0; n < threads; n++) {
-        exec(`start cmd /c node ${process.argv[1]} ${n}`, function(err, stdout, errout) {})
+        Comm.exec(`node ${process.argv[1]} ${n}`);
     }
-    return
+    setTimeout(function () {
+        process.exit();
+    }, 500);
+    return;
 } else {
+    console.log(`#${process.pid} ${JSON.stringify(process.argv)}`);
     N = parseInt(N)
 }
 
@@ -39,13 +42,16 @@ co(function*() {
         });
         for (let i in arr) {
             const video = arr[i];
-            const res = yield Browser.GET(video.url);
-            const $ = cheerio.load(res.body);
-            const mp4 = $('.sp_kj .x_z a').first().attr('href');
-            if (mp4) {
-                video.mp4 = mp4;
-                console.log(video);
-                yield DB.Model.replace(video)
+            const data = yield DB.Model.findOne({where: {id: video.id}});
+            if (!data || !data.mp4) {
+                const res = yield Browser.GET(video.url);
+                const $ = cheerio.load(res.body);
+                const mp4 = $('.sp_kj .x_z a').first().attr('href');
+                if (mp4 && mp4.endsWith('.mp4')) {
+                    video.mp4 = mp4;
+                    console.log(video);
+                    yield DB.Model.replace(video)
+                }
             }
         }
     }

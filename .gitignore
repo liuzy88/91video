@@ -3,6 +3,7 @@ node_modules
 *.log
 *.iml
 *.db
+*.db-journal
 .cache
 fetch.page
 fetch.txt

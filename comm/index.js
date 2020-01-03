@@ -46,7 +46,7 @@ module.exports.writeFileVal = function (file, val) {
     fs.writeFileSync(file, val);
 };
 
-module.exports.winName = function(name) {
+module.exports.winName = function (name) {
     return name.trim().replace(/[\\:*?"|]/gim, '_').trim();
 };
 
@@ -58,9 +58,13 @@ module.exports.openVideo = function (conf, data) {
     return function (cb) {
         const src = path.join(conf.dlDir, path.basename(data.mp4));
         const dst = fs.existsSync(src) ? src : path.join(conf.reDir, module.exports.newName(data.id, data.title));
-        exec('explorer.exe "' + dst + '"', function (err, stdout, stderr) {
-            // if (err) {console.log(err);}
+        exec('start "' + dst + '"', function (err, stdout, stderr) {
             cb(null);
         });
     }
+};
+
+module.exports.exec = function (command) {
+    console.log(command);
+    exec(`start cmd /k ${command}`, function(err, stdout, stderr) {});
 };

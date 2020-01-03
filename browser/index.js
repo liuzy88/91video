@@ -54,7 +54,7 @@ function request(method, url, headers, form) {
             cb(null, ret);
             return;
         }
-        Cookie.append(options);
+        Cookie.append(options.headers);
         const agent = options.protocol === 'https:' ? https : http;
         const req = agent.request(options, (res) => {
             res.setTimeout(3000);
