@@ -47,7 +47,7 @@ module.exports.writeFileVal = function (file, val) {
 };
 
 module.exports.winName = function (name) {
-    return name.trim().replace(/[\\:*?"|]/gim, '_').trim();
+    return name.trim().replace(/[\/\\:*?"|]+?/gim, '_').trim();
 };
 
 module.exports.newName = function (id, name) {

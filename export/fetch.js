@@ -6,8 +6,8 @@ const Conf = require('../conf');
 const Comm = require('../comm');
 
 const dlDir = Conf.exp.dlDir;
-const rows = 500;
-const page = 5;
+const rows = 1000;
+const page = 2;
 const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 
