@@ -13,6 +13,8 @@ const reDir = Conf.exp.reDir;
 const logFile = 'rename.log';
 const errFile = 'rename.err';
 
+// execute, where Thunder downloaded a batch.
+
 co(function* () {
     yield DB.use('caobi45');
     Comm.mkDirs(reDir);
