@@ -7,7 +7,7 @@ const Comm = require('../comm');
 
 const dlDir = Conf.exp.dlDir;
 const rows = 500;
-const page = 1;
+const page = 5;
 const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 

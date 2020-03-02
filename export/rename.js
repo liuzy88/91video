@@ -21,6 +21,11 @@ co(function* () {
     for (let i = 0; i < videos.length; i++) {
         const file = videos[i];
         const src = path.join(dlDir, file);
+        if (fs.statSync(src).size < 20480) {
+            errLog(`Warning invalid file! name=${file}`);
+            fs.unlinkSync(src);
+            continue;
+        }
         const data = yield DB.Model.findAll({
             where: {
                 mp4: {[Op.endsWith]: file},
