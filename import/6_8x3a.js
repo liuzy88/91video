@@ -25,13 +25,13 @@ if (N === undefined) {
 co(function*() {
     yield DB.use('8x3a');
     for (let page = start; page <= end; page += threads) {
-        const res = yield Browser.GET(`https://8dmx.com/html/category/video/page_${page + N}.html`);
+        const res = yield Browser.GET(`https://8dni.com/html/category/video/page_${page + N}.html`);
         const $ = cheerio.load(res.body);
         const arr = [];
         $('.l_b li').each(function() {
             const path = $(this).find('.t_p a').attr('href');
             if (path && path !== '/') {
-                const url = 'https://8dmx.com' + path;
+                const url = 'https://8dni.com' + path;
                 const id = path.substring(6, path.length - 1);
                 const title = $(this).find('.w_z h3').text();
                 const jpg = $(this).find('.t_p a img').attr('data-original');

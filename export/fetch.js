@@ -6,8 +6,9 @@ const Conf = require('../conf');
 const Comm = require('../comm');
 
 const dlDir = Conf.exp.dlDir;
+const skip = 0;
 const rows = 1000;
-const page = 2;
+const page = 1;
 const pageFile = 'fetch.page';
 const outFile = 'fetch.txt';
 
@@ -15,7 +16,7 @@ co(function*() {
     const model = yield DB.use('caobi45');
     // const page = Comm.readFileInt(pageFile, 1);
     const exFiles = Comm.mp4TempFiles(dlDir);
-    let sql = `SELECT id, mp4, SUBSTR(mp4,LENGTH(mp4)-38) AS fname FROM ${model.tableName} WHERE saved=0`;
+    let sql = `SELECT id, mp4, SUBSTR(mp4,LENGTH(mp4)-38) AS fname FROM ${model.tableName} WHERE saved=0 and id>${skip}`;
     if (exFiles.length > 0) {
         sql += ` AND fname NOT IN ('${exFiles.join(`','`)}')`;
     }
