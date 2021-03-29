@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "iconv-lite": "^0.5.0",
     "mysql2": "^1.7.0",
+    "node-fetch": "^2.6.1",
     "sequelize": "^5.18.4",
     "sqlite3": "^4.1.0"
   }
