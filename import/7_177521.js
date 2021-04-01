@@ -20,14 +20,18 @@ const cacheDir = path.join(outDir, '缓存');
     let tags = ['性感', '平面模特', '内地90后', '模特', '日本偶像', '日本模特', '内地平面模特', '中国模特', '比基尼', '正妹', '美腿',
         'showgirl', '巨乳', '台湾正妹', '妹子', '内地模特', '诱惑', 'cosplay', '清纯', '美乳', '酥胸', '台湾模特', '美国模特', '爆乳',
         '写真', '美女', '日本演员', 'Coser', '私房', 'Jkf女郎', '翘臀', '车模', '可爱', '童颜巨乳', '女神', '日本歌手', '半裸', '大尺度',
-        '韩国模特', '全裸'].shuffle().shuffle(); //
+        '韩国模特', '全裸'].shuffle().shuffle();
     for (let i = 0; i < tags.length; i++) {
+        console.debug('===>', `${i + 1}/${tags.length}`, tags[i]);
+        await scanTag(tags[i]);
+    }
+    for (let i = 0; i < tags.length; i++) {
+        console.debug('==+>', `${i + 1}/${tags.length}`, tags[i]);
         await scanTag(tags[i], true);
     }
 })().catch(err => console.log(err));
 
-async function scanTag(name, cao) {
-    console.debug('===>', name);
+async function scanTag(name, next) {
     let tag = {};
     tag.name = name;
     tag.url = `http://www.177521.com/e/tags/?tagname=${encodeURIComponent(tag.name)}`;
@@ -64,15 +68,21 @@ async function scanTag(name, cao) {
         }
         fs.writeFileSync(tag.cache, JSON.stringify(tag, null, 2));
     }
-    if (cao) {
+    if (next) {
         for (let i = 0; i < tag.mm.length; i++) {
             const arr = tag.mm[i].split('/');
+            console.debug('++=>', `${i + 1}/${tag.mm.length}`, tag.name, arr[1]);
+            await scanGirl(arr[1], arr[2].split('.')[0]);
+        }
+        for (let i = 0; i < tag.mm.length; i++) {
+            const arr = tag.mm[i].split('/');
+            console.debug('+==>', `${i + 1}/${tag.mm.length}`, tag.name, arr[1]);
             await scanGirl(arr[1], arr[2].split('.')[0], true);
         }
     }
 }
 
-async function scanGirl(type, id, gan) {
+async function scanGirl(type, id, next) {
     if (id === 'www') {
         return;
     }
@@ -81,6 +91,7 @@ async function scanGirl(type, id, gan) {
     mm.cache = path.join(dataDir, `${id}.json`);
     if (fs.existsSync(mm.cache)) {
         mm = JSON.parse(fs.readFileSync(mm.cache));
+        console.debug(mm.id, mm.name);
     } else {
         let url = `http://www.177521.com/${type}/${id}.html`;
         let $ = await getWeb(url);
@@ -127,7 +138,7 @@ async function scanGirl(type, id, gan) {
         }
         fs.writeFileSync(mm.cache, JSON.stringify(mm, null, 2));
     }
-    if (gan && mm.img.length > 0) {
+    if (next && mm.img.length > 0) {
         await getImgs(mm);
     }
 }
@@ -181,13 +192,13 @@ async function getWeb(url) {
         if (url.startsWith('/')) {
             url = 'http://www.177521.com' + url;
         }
-        console.debug('--->', url);
         let cache_url = url.split('://')[1].replaceAll('/', '_');
         let cache_file = path.join(cacheDir, cache_url);
         let body;
         if (fs.existsSync(cache_file)) {
             body = fs.readFileSync(cache_file);
         } else {
+            console.debug('--->', url);
             body = await fetch(url, {headers: headers}).then(res => res.text());
         }
         if (body && body.length > 100) {
