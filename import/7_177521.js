@@ -35,7 +35,6 @@ async function scanTag(name, cao) {
     if (fs.existsSync(tag.cache)) {
         tag = JSON.parse(fs.readFileSync(tag.cache));
     } else {
-        console.debug(tag.name, '第1页', tag.url);
         let $ = await getWeb(tag.url);
         if ($ == null) {
             return;
