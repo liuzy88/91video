@@ -44,8 +44,8 @@ module.exports.remember = function(options, headers) {
     const cookies = headers['set-cookie'] || [];
     if (cookies.length > 0) {
         for (let i = 0; i < cookies.length; i++) {
-            const cookie = Cookie.parse(cookies[0].trim());
-            obj[Object.keys(cookie)[0]] = cookie;
+            const cookie = Cookie.parse(cookies[i].trim());
+            obj[Object.keys(cookie)[i]] = cookie;
         }
         fs.writeFile(file, JSON.stringify(obj, null, 2), 'utf8', function(err) {
             if (err) {

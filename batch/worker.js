@@ -30,7 +30,7 @@ module.exports.start = async function (instance) {
                     process.send(`任务完成了`);
                 } else {
                     process.sleepCount++;
-                    if (process.sleepCount > 10) {
+                    if (process.sleepCount > 3) {
                         process.send('我要下班')
                     } else {
                         console.log(`[${process.id}-${process.pid}]: 收到空任务，休息一会儿，第${process.sleepCount}次休息`);
