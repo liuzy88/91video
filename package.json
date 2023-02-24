@@ -20,7 +20,7 @@
     "iconv-lite": "^0.5.0",
     "mysql2": "^1.7.0",
     "node-fetch": "^2.6.1",
-    "sequelize": "^5.18.4",
+    "sequelize": "^6.29.0",
     "sqlite3": "^4.1.0"
   }
 }
